@@ -1,3 +1,3 @@
 # owenyu.github.io
-This is \\
 
+For educational stuff.
