@@ -49,7 +49,11 @@ nav a[aria-current=page]{color:#666e9b;text-decoration:underline;text-underline-
   .hero-art .art-star{rotate:none}
 }
 
-/* Decorative paint covers the old palette before the new page is revealed. */
-.theme-paint{position:fixed;inset:0;z-index:10000;overflow:hidden;pointer-events:none;contain:strict}
-.paint-dab{position:absolute;display:block;background:var(--paint);will-change:transform;pointer-events:none}
-@media(prefers-reduced-motion:reduce){.theme-paint{display:none}}
+/* Reveal the new page through one growing splatter; text changes at its edge. */
+html.theme-reveal::view-transition-group(root){animation:none}
+html.theme-reveal::view-transition-old(root),html.theme-reveal::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.theme-reveal::view-transition-old(root){z-index:1}
+html.theme-reveal::view-transition-new(root){z-index:2}
+html.theme-reveal::view-transition-image-pair(root){isolation:isolate}
+
+html.theme-reveal *,html.theme-reveal *::before,html.theme-reveal *::after{transition:none!important}

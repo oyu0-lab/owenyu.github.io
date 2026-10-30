@@ -27,69 +27,64 @@
       const theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       const button = event.currentTarget;
-      const paint = document.createElement('div');
-      paint.className = 'theme-paint';
-      paint.setAttribute('aria-hidden', 'true');
-      paint.style.setProperty('--paint', theme === 'dark' ? '#191b2a' : '#f6f6fa');
-      const animations = [];
+      let transition;
+      let animation;
       const apply = () => {
         savedTheme = theme;
         applyTheme(theme);
         try { localStorage.setItem('owen-theme', theme); } catch {}
       };
-      const stopMotion = () => animations.forEach(animation => animation.finish());
+      const stopMotion = () => {
+        animation?.finish();
+        transition?.skipTransition();
+      };
       try {
-        if (reducedMotion.matches || !Element.prototype.animate) {
+        if (reducedMotion.matches || !document.startViewTransition) {
           apply();
           return;
         }
         const bounds = button.getBoundingClientRect();
-        const startX = bounds.left + bounds.width / 2;
-        const startY = bounds.top + bounds.height / 2;
-        const width = innerWidth;
-        const height = innerHeight;
-        const columns = 5;
-        const rows = 6;
-        const cellWidth = width / columns;
-        const cellHeight = height / rows;
-        const diameter = Math.max(cellWidth, cellHeight) * 2.9;
-        // Overlapping irregular paint dabs cover the viewport, without copying page content.
-        for (let row = 0; row < rows; row++) {
-          for (let column = 0; column < columns; column++) {
-            const dab = document.createElement('span');
-            const x = (column + .5 + Math.sin(row * 7 + column) * .15) * cellWidth;
-            const y = (row + .5 + Math.cos(column * 5 + row) * .15) * cellHeight;
-            const distance = Math.hypot(x - startX, y - startY) / Math.hypot(width, height);
-            dab.className = 'paint-dab';
-            dab.style.cssText = `left:${x}px;top:${y}px;width:${diameter}px;height:${diameter}px;border-radius:${43 + row % 3 * 5}% ${56 - column % 3 * 5}% ${44 + column % 4 * 3}% ${55 - row % 4 * 3}% / 48% 42% 58% 52%;`;
-            paint.append(dab);
-            const animation = dab.animate([
-              { transform: 'translate(-50%, -50%) scale(0) rotate(-18deg)' },
-              { transform: 'translate(-50%, -50%) scale(.12) rotate(-10deg)', offset: .38 },
-              { transform: 'translate(-50%, -50%) scale(1) rotate(8deg)' }
-            ], { duration: 620, delay: distance * 380, easing: 'cubic-bezier(.45,0,.25,1)', fill: 'both' });
-            animations.push(animation);
-          }
-        }
-        document.body.append(paint);
-        reducedMotion.addEventListener('change', stopMotion);
-        await Promise.all(animations.map(animation => animation.finished));
-        // Switch only once opaque paint covers the old page, then reveal the new palette.
-        paint.style.backgroundColor = paint.style.getPropertyValue('--paint');
-        apply();
-        if (!reducedMotion.matches) {
-          const clearing = paint.animate([{ opacity: 1 }, { opacity: 0 }], {
-            duration: 430, delay: 90, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards'
+        const x = bounds.left + bounds.width / 2;
+        const y = bounds.top + bounds.height / 2;
+        const farthestCorner = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+        // One continuous comic-style outline, with rounded lobes and uneven fingers.
+        // All frames share the same vertices so the mask expands smoothly.
+        const outline = radius => {
+          const points = Array.from({ length: 240 }, (_, index) => {
+            const angle = index / 240 * Math.PI * 2;
+            const wave = 1 + .13 * Math.sin(angle * 9 + .8)
+              + .055 * Math.sin(angle * 15 - .4) + .025 * Math.cos(angle * 5);
+            return `${(x + Math.cos(angle) * radius * wave).toFixed(2)}px ${(y + Math.sin(angle) * radius * wave).toFixed(2)}px`;
           });
-          animations.push(clearing);
-          await clearing.finished;
+          return `polygon(${points.join(',')})`;
+        };
+        root.classList.add('theme-reveal');
+        reducedMotion.addEventListener('change', stopMotion);
+        // The new snapshot contains the actual new text colours, not a paint overlay.
+        transition = document.startViewTransition(apply);
+        await transition.ready;
+        if (reducedMotion.matches) {
+          transition.skipTransition();
+        } else {
+          animation = root.animate({
+            clipPath: [outline(0), outline(farthestCorner / .77)]
+          }, {
+            duration: 1800,
+            easing: 'cubic-bezier(.45,0,.55,1)',
+            fill: 'both',
+            pseudoElement: '::view-transition-new(root)'
+          });
+          await animation.finished;
+          animation.cancel();
         }
+        await transition.finished;
       } catch {
+        transition?.skipTransition();
         apply();
       } finally {
         reducedMotion.removeEventListener('change', stopMotion);
-        paint.remove();
-        animations.forEach(animation => animation.cancel());
+        animation?.cancel();
+        root.classList.remove('theme-reveal');
         switching = false;
       }
     });
