@@ -36,19 +36,4 @@ document.getElementById('reset').addEventListener('click', () => {
   sliders.forEach((slider, i) => { slider.value = i === 0 ? 1 : 0; });
   updateGraph();
 });
-const questions = [
-  'Can you explain why a negative times a negative is positive?',
-  'If you doubled the radius of a circle, what would happen to its area?',
-  'How would you estimate the height of a tree without climbing it?',
-  'Why does a 50% increase followed by a 50% decrease leave you with less?',
-  'What would you change about an experiment to make its results more reliable?',
-  'How could you tell the difference between correlation and causation?',
-  'What is something you understand better after explaining it to someone else?'
-];
-let questionIndex = 0;
-document.getElementById('new-question').addEventListener('click', () => {
-  questionIndex = (questionIndex + 1) % questions.length;
-  document.getElementById('question').textContent = questions[questionIndex];
-});
-document.getElementById('year').textContent = new Date().getFullYear();
 updateGraph();
