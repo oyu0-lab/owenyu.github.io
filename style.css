@@ -21,3 +21,31 @@ nav a[aria-current=page]{color:#666e9b;text-decoration:underline;text-underline-
 [data-theme=dark] .plot-wrap>output{background:#222536e8;color:var(--ink);border-color:var(--line)}[data-theme=dark] #lab-grid path{stroke:#363a50}[data-theme=dark] #plot>path{stroke:#777e9e}[data-theme=dark] #plot>g{fill:#b0b0c5}[data-theme=dark] #curve{stroke:#b5bce7}[data-theme=dark] .orbit{border-color:#393d56}
 @media(max-width:700px){.site-header{position:relative}.site-header>.brand{padding-right:39px}.header-actions{position:absolute;top:15px;right:0}.theme-toggle{width:32px;height:32px;padding:7px}.site-header .brand-end{font-size:10px;margin-left:6px}}
 .spark-icon{width:1em;height:1em;display:inline-block;vertical-align:-.1em}.graph-paper,.floating-note{color:#2e3047}.button-dark{background:#353950}.button-dark:hover{background:#4b4b70}.curiosity-art .spark-icon{display:block}
+/* Progressive motion: ordinary navigation and visible content are the fallback. */
+@view-transition{navigation:auto}
+@keyframes page-out{to{opacity:0;transform:translateY(-5px)}}
+@keyframes page-in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+::view-transition-old(root){animation:180ms ease-out both page-out}
+::view-transition-new(root){animation:420ms cubic-bezier(.22,1,.36,1) both page-in;animation-delay:60ms}
+@media(prefers-reduced-motion:no-preference){
+  .reveal-pending{opacity:0}
+  .hero-art .graph-paper{translate:0 var(--depth,0px)}
+  .hero-art .floating-note{translate:0 calc(var(--depth,0px) * -.6)}
+  .hero-art .art-star{rotate:var(--spin,0deg)}
+  .topic-card{transition:transform 550ms cubic-bezier(.22,1,.36,1),box-shadow 550ms ease,background-color 450ms ease,border-color 450ms ease}
+  .button,.header-cta,.filter,.theme-toggle{transition:transform 350ms cubic-bezier(.22,1,.36,1),background-color 350ms ease,color 350ms ease,border-color 350ms ease,box-shadow 350ms ease}
+  .button .arrow-icon,.card-top .arrow-icon,.text-link .arrow-icon,.header-cta .arrow-icon{transition:transform 450ms cubic-bezier(.22,1,.36,1)}
+  .button:active,.theme-toggle:active,.filter:active{transform:scale(.96)}
+  .theme-changing body,.theme-changing body *{transition:background-color 550ms ease,color 550ms ease,border-color 550ms ease,fill 550ms ease,stroke 550ms ease,box-shadow 550ms ease}
+}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+  .topic-card:hover{transform:translateY(-7px);box-shadow:0 18px 40px #191b2a12}
+  .button:hover .arrow-icon,.topic-card:hover .card-top .arrow-icon,.header-cta:hover .arrow-icon,.text-link:hover .arrow-icon{transform:translate(2px,-2px)}
+  .header-cta:hover{transform:translateY(-2px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal-pending{opacity:1}
+  ::view-transition-old(root),::view-transition-new(root){animation:none!important}
+  .hero-art .graph-paper,.hero-art .floating-note{translate:none}
+  .hero-art .art-star{rotate:none}
+}

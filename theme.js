@@ -2,6 +2,7 @@
   const root = document.documentElement;
   const preference = window.matchMedia('(prefers-color-scheme: dark)');
   let savedTheme;
+  let transitionTimer;
   try { savedTheme = localStorage.getItem('owen-theme'); } catch {}
   const isTheme = value => value === 'light' || value === 'dark';
 
@@ -21,6 +22,13 @@
   document.addEventListener('DOMContentLoaded', () => {
     applyTheme(root.dataset.theme);
     document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        root.classList.add('theme-changing');
+        clearTimeout(transitionTimer);
+        transitionTimer = setTimeout(() => root.classList.remove('theme-changing'), 650);
+        const icon = document.querySelector('.theme-toggle');
+        icon.animate([{ transform: 'rotate(-35deg) scale(.85)' }, { transform: 'rotate(0) scale(1)' }], { duration: 450, easing: 'cubic-bezier(.22,1,.36,1)' });
+      }
       savedTheme = root.dataset.theme === 'dark' ? 'light' : 'dark';
       applyTheme(savedTheme);
       try { localStorage.setItem('owen-theme', savedTheme); } catch {}
