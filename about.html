@@ -8,16 +8,20 @@
 <title>About — Owen</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <script src="theme.js"></script>
+<script src="content.js" defer></script>
+<script src="site.js" defer></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
-<header class="site-header wrap"><a class="brand" href="index.html">Owen</a>
+<header class="site-header wrap"><a class="brand" href="index.html" data-site-name>Owen</a>
 <nav aria-label="Main navigation"><a href="index.html">Home</a><a href="portfolio.html">Work</a><a href="learning.html">Resources</a><a href="about.html" aria-current="page">About</a></nav><button class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" aria-pressed="false">
 <svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"/></svg>
 <svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
 </button></header>
-<main class="wrap" id="main"><h1>About</h1><p>I’m Owen. This is my personal website for academic work and educational resources.</p><p>You can find published work under <a href="portfolio.html">Work</a> and interactive tools under <a href="learning.html">Resources</a>.</p></main>
-<footer class="wrap"><span>Owen</span></footer>
+<main class="wrap" id="main"><h1>About</h1>
+<div data-about><p>I’m Owen. This is my personal website.</p></div>
+</main>
+<footer class="wrap"><span data-site-name>Owen</span></footer>
 </body>
 </html>
