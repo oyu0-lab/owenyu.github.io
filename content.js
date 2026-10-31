@@ -1,7 +1,7 @@
 // EDIT THIS FILE to update your website. Keep quotation marks and commas.
 // Changes here appear on the home page and the relevant Work / Resources page.
 window.siteContent = {
-  name: "Owen",
+  name: "Owen Yu",
   intro: "Welcome to my personal website. I keep my work and resources here.",
   // Each string is a separate paragraph on the About page.
   about: [
